@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVehicleRequest;
+use App\Http\Requests\UpdateVehicleRequest;
 use App\Models\Vehicle;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,9 +15,9 @@ class VehicleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($status)
     {
-        //
+        
     }
 
     /**
@@ -71,7 +72,29 @@ class VehicleController extends Controller
      */
     public function show($id)
     {
-        //
+        try{
+            $vehicle = Vehicle::find($id);
+
+            return response()
+                ->json(
+                    $data = [
+                        "status" => "SUCCESS",
+                        "message" => "Successfully deleted vehicle with $vehicle->registration_no",
+                        "data" => $vehicle
+                    ], 
+                    $status = 200
+                );
+        }
+        catch(Exception $e){
+            return response()
+                ->json(
+                    $data = [
+                        "status" => "FAILED",
+                        "message" => "Encountered the following error $e->getMessage()"
+                    ], 
+                    $status = 418
+                );
+        }
     }
 
     /**
@@ -88,11 +111,11 @@ class VehicleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UpdateVehicleRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreVehicleRequest $request, $id)
+    public function update(UpdateVehicleRequest $request, $id)
     {
         $validated = $request->validated();
 
@@ -103,9 +126,9 @@ class VehicleController extends Controller
                 ->json(
                     $data = [
                         "status" => "SUCCESS",
-                        "message" => "Successfully added vehicle with $vehicle->registration_no"
+                        "message" => "Successfully updated vehicle with $vehicle->registration_no"
                     ], 
-                    $status = 201
+                    $status = 200
                 );
         }
         catch(Exception $e){
@@ -128,6 +151,27 @@ class VehicleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            $vehicle = Vehicle::find($id)->delete();
+
+            return response()
+                ->json(
+                    $data = [
+                        "status" => "SUCCESS",
+                        "message" => "Successfully deleted vehicle with $vehicle->registration_no"
+                    ], 
+                    $status = 200
+                );
+        }
+        catch(Exception $e){
+            return response()
+                ->json(
+                    $data = [
+                        "status" => "FAILED",
+                        "message" => "Encountered the following error $e->getMessage()"
+                    ], 
+                    $status = 418
+                );
+        }
     }
 }
